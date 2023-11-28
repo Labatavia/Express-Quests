@@ -1,3 +1,5 @@
+
+
 const movies = [
   {
     id: 1,
@@ -52,7 +54,14 @@ const getMovieById = (req, res) => {
       res.sendStatus(500);
     });
 };
+
+const postMovie = (req, res) => {
+  console.log(req.body);
+  res.send("Post route is working 🎉");
+};
+
 module.exports = {
   getMovies,
   getMovieById,
+  postMovie,
 };
