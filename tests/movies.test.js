@@ -1,7 +1,9 @@
 const request = require("supertest");
 const app = require("../src/app");
 const database = require("../database");
+
 afterAll(() => database.end());
+
 describe("GET /api/movies", () => {
   it("should return all movies", async () => {
     const response = await request(app).get("/api/movies");
@@ -130,5 +132,22 @@ describe("PUT /api/movies/:id", () => {
     const response = await request(app).put("/api/movies/0").send(newMovie);
 
     expect(response.status).toEqual(404);
+  });
+});
+describe("DELETE /api/movies/:id", () => {
+  it('should delete a movie by ID and return 204', async () => {
+    const response = await request(app)
+      .delete('/api/movies/:id')  // Assurez-vous d'ajuster le chemin en fonction de votre route
+      .send({ id: deleteMovie });  // Assurez-vous d'envoyer un ID existant
+
+    expect(response.status).toBe(204);
+  });
+
+  it('should return 404 for non-existing movie ID', async () => {
+    const response = await request(app)
+      .delete('/api/movies/:id')  // Assurez-vous d'ajuster le chemin en fonction de votre route
+      .send({ id: deleteMovie });  // Assurez-vous d'envoyer un ID qui n'existe pas
+
+    expect(response.status).toBe(404);
   });
 });

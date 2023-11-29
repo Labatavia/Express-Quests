@@ -62,7 +62,7 @@ describe("POST /api/users", () => {
 });
 describe("PUT /api/users/:id", () => {
   it("should edit users", async () => {
-    const newMovie = {
+    const newUser = {
       title: "Avatar",
       director: "James Cameron",
       year: "2009",
@@ -70,60 +70,78 @@ describe("PUT /api/users/:id", () => {
       duration: 162,
     };
     const [result] = await database.query(
-      "INSERT INTO movies(title, director, year, color, duration) VALUES (?, ?, ?, ?, ?)",
+      "INSERT INTO movies(firstname, lastname, email, city, language) VALUES (?, ?, ?, ?, ?)",
       [
-        newMovie.title,
-        newMovie.director,
-        newMovie.year,
-        newMovie.color,
-        newMovie.duration,
+        newUser.firstname,
+        newUser.lastname,
+        newUser.email,
+        newUser.city,
+        newUser.language,
       ]
     );
     const id = result.insertId;
-    const updatedMovie = {
-      title: "Wild is life",
-      director: "Alan Smithee",
-      year: "2023",
-      color: "0",
-      duration: 120,
+    const updatedUser = {
+      firstname: "Max",
+      lastname: "Alan ",
+      email: "esffes@gmail.com",
+      city: "Nantes",
+      language: "français",
     };
     const response = await request(app)
-      .put(`/api/movies/${id}`)
-      .send(updatedMovie);
+      .put(`/api/users/${id}`)
+      .send(updatedUser);
     expect(response.status).toEqual(204);
-    const [movies] = await database.query(
-      "SELECT * FROM movies WHERE id=?",
+    const [users] = await database.query(
+      "SELECT * FROM users WHERE id=?",
       id
     );
-    const [movieInDatabase] = movies;
-    expect(movieInDatabase).toHaveProperty("id");
-    expect(movieInDatabase).toHaveProperty("title");
-    expect(movieInDatabase.title).toStrictEqual(updatedMovie.title);
-    expect(movieInDatabase).toHaveProperty("director");
-    expect(movieInDatabase.director).toStrictEqual(updatedMovie.director);
-    expect(movieInDatabase).toHaveProperty("year");
-    expect(movieInDatabase.year).toStrictEqual(updatedMovie.year);
-    expect(movieInDatabase).toHaveProperty("color");
-    expect(movieInDatabase.color).toStrictEqual(updatedMovie.color);
-    expect(movieInDatabase).toHaveProperty("duration");
-    expect(movieInDatabase.duration).toStrictEqual(updatedMovie.duration);
+    const [userInDatabase] = movies;
+    expect(userInDatabase).toHaveProperty("id");
+    expect(userInDatabase).toHaveProperty("firstname");
+    expect(userInDatabase.title).toStrictEqual(updatedUser.title);
+    expect(userInDatabase).toHaveProperty("lastname");
+    expect(userInDatabase.director).toStrictEqual(updatedUser.director);
+    expect(userInDatabase).toHaveProperty("year");
+    expect(userInDatabase.year).toStrictEqual(updatedUser.email);
+    expect(userInDatabase).toHaveProperty("color");
+    expect(userInDatabase.color).toStrictEqual(updatedUser.city);
+    expect(userInDatabase).toHaveProperty("language");
+    expect(userInDatabase.duration).toStrictEqual(updatedUser.duration);
   });
   it("should return an error", async () => {
-    const movieWithMissingProps = { title: "Harry Potter" };
+    const userWithMissingProps = { title: "Harry Potter" };
     const response = await request(app)
-      .put(`/api/movies/1`)
-      .send(movieWithMissingProps);
+      .put(`/api/users/1`)
+      .send(userWithMissingProps);
     expect(response.status).toEqual(422);
   });
-  it("should return no movie", async () => {
-    const newMovie = {
-      title: "Avatar",
-      director: "James Cameron",
-      year: "2009",
-      color: "1",
-      duration: 162,
+  it("should return no user", async () => {
+    const newUser = {
+      firstname: "Jack",
+      lastname: "Sparrow ",
+      email: "jacks@gmail.com",
+      city: "Guatemala",
+      language: "Anglais",
     };
-    const response = await request(app).put("/api/movies/0").send(newMovie);
+    const response = await request(app).put("/api/users/0").send(newUser);
     expect(response.status).toEqual(404);
+  });
+});
+
+describe("DELETE /api/users/:id", () => {
+  it('should delete a user by ID and return 204', async () => {
+    const response = await request(app)
+      .delete('/api/users/:id')  
+      .send({ id: deleteUser });  
+
+    expect(response.status).toBe(204);
+  });
+
+  it('should return 404 for non-existing user ID', async () => {
+    const response = await request(app)
+      .delete('/api/users/:id')  
+      .send({ id: deleteUser });  
+
+    expect(response.status).toBe(404);
   });
 });

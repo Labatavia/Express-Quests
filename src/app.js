@@ -18,8 +18,8 @@ app.get("/api/users/:id", usersControllers.getUserById);
 app.post("/api/movies", validateMovie, movieControllers.postMovie);
 app.post("api/users", validateUser, usersControllers.postUsers )
 
-app.put("/api/movies/:id", movieControllers.updateMovie);
-app.put("/api/users/:id", usersControllers.updateUsers);
+app.put("/api/movies/:id",validateMovie, movieControllers.updateMovie);
+app.put("/api/users/:id", validateUser,usersControllers.updateUsers);
 
 app.delete("/api/movies/:id", movieControllers.deleteMovie);
 app.delete("/api/movies/:id", usersControllers.deleteUsers);
